@@ -10,6 +10,9 @@ requests = "^2.25.1"
 pandas = "^1.2.0"
 ipython = "^7.19.0"
 mypy = "^0.790"
+feedparser = "^6.0.2"
+beautifulsoup4 = "^4.9.3"
+lxml = "^4.6.2"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.4"
