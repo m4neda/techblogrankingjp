@@ -2,6 +2,7 @@ from typing import Dict, List
 import requests
 import json
 import pandas as pd
+import feedparser
 import time
 from typing import TypedDict
 
@@ -31,3 +32,14 @@ for idx, row in enumerate(df.itertuples()):
 
 with open('hatebucount.json', 'w') as file:
     json.dump(values, file, indent=4, ensure_ascii=True)
+
+
+def calc_techblogscore(median_hatebu_count, number_of_articles: int):
+    techblogscore = number_of_articles * (median_hatebu_count + 1)
+    pass
+
+
+def save_feed(rss_url):
+    feed = feedparser.parse(rss_url)
+    entries = pd.DataFrame(feed.entries)
+    pass
