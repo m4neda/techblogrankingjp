@@ -14,12 +14,6 @@ logger = getLogger(__name__)
 NEXT_PAGE_SELECTOR = "[class='entrylist-readmore js-keyboard-selectable-item'] > a"
 
 
-def get_keywords_for_search(file_name: str) -> list[str]:
-    with open(file_name) as f:
-        keyword_list = [s.rstrip() for s in f.readlines()]
-    return keyword_list
-
-
 def get_response(url, page):
     endpoint = 'https://b.hatena.ne.jp/entrylist'
     try:
@@ -36,7 +30,6 @@ def get_response(url, page):
                 'url': url,
                 'sort': 'eid'},
             verify=False)
-    time.sleep(1)
     return r
 
 
@@ -60,12 +53,12 @@ def get_all_entrylist(
         entrylist: list,
         page_count: Optional[int]) -> List[BeautifulSoup]:
 
+    time.sleep(1)
     response: requests.models.Response = get_response(url, page_count)
     soup: BeautifulSoup = get_soup(response)
     entrylist.append(soup)
     next_page: list = soup.select_one(NEXT_PAGE_SELECTOR)
-    # return only one for test
-    return entrylist
+
     if next_page:
         next_page_url: str = next_page['href']
         parsed = urlparse.urlparse(next_page_url)
@@ -80,46 +73,45 @@ class Article(NamedTuple):
     hatebu_count: str
 
 
-def save_url(keyword, urls: Article):
+def save_url(company_name, urls: Article):
     HEADER = [
-        'url',
+        'article_url',
         'published_at',
         'hatebu_count'
     ]
-    with open(keyword + '.csv', 'w+') as f:
+    with open(company_name + '.csv', 'w+') as f:
         writer = csv.writer(f)
         writer.writerow(HEADER)
         for row in urls:
-            writer.writerow(
-                [row.url, row.published_at.strftime('%Y-%m-%d %H:%M')])
+            writer.writerow([row.url, row.published_at.strftime(
+                '%Y-%m-%d %H:%M'), row.hatebu_count])
 
 
 def main():
-    keywords: List[str] = get_keywords_for_search(
-        file_name='hatena_keyword.txt')
-    # pick one for test
-    keyword = keywords[0]
+    df = pd.read_csv('techbloglist.csv', usecols=['company_name', 'url'])
+    for row in df.itertuples():
+        keyword = row.url
 
-    entrylist: List[BeautifulSoup] = []
-    entrylist = get_all_entrylist(keyword, entrylist, page_count=None)
-    for entry in entrylist:
-        articles: ResultSet = get_articles_from_hatebu(entry)
-        urls: List[Article] = []
-        for article in articles:
-            article_url: str = article.find('a',
-                                            {'class': 'js-keyboard-openable',
-                                             'data-gtm-click-label': 'entry-info-title',
-                                             'href': True})['href']
-            published_date: str = article.find(
-                'li', {'class': 'entrylist-contents-date'}).contents[0]
-            published_at: datetime = datetime.strptime(
-                published_date, '%Y/%m/%d %H:%M')
+        entrylist: List[BeautifulSoup] = []
+        entrylist = get_all_entrylist(keyword, entrylist, page_count=None)
+        for entry in entrylist:
+            articles: ResultSet = get_articles_from_hatebu(entry)
+            urls: List[Article] = []
+            for article in articles:
+                article_url: str = article.find('a',
+                                                {'class': 'js-keyboard-openable',
+                                                 'data-gtm-click-label': 'entry-info-title',
+                                                 'href': True})['href']
+                published_date: str = article.find(
+                    'li', {'class': 'entrylist-contents-date'}).contents[0]
+                published_at: datetime = datetime.strptime(
+                    published_date, '%Y/%m/%d %H:%M')
 
-            hatebu_count: str = article.find(
-                'a', {'class': 'js-keyboard-entry-page-openable'}).select_one("span").text
+                hatebu_count: str = article.find(
+                    'a', {'class': 'js-keyboard-entry-page-openable'}).select_one("span").text
 
-            urls.append(Article(article_url, published_at, hatebu_count))
-        save_url(keyword, urls)
+                urls.append(Article(article_url, published_at, hatebu_count))
+            save_url(row.company_name, urls)
 
 
 if __name__ == '__main__':
