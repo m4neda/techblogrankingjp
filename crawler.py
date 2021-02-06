@@ -79,7 +79,7 @@ def save_url(company_name, urls: Article):
         'published_at',
         'hatebu_count'
     ]
-    with open(company_name + '.csv', 'w+') as f:
+    with open('csv/' + company_name + '.csv', 'w+') as f:
         writer = csv.writer(f)
         writer.writerow(HEADER)
         for row in urls:
@@ -94,14 +94,16 @@ def main():
 
         entrylist: List[BeautifulSoup] = []
         entrylist = get_all_entrylist(keyword, entrylist, page_count=None)
+        urls: List[Article] = []
         for entry in entrylist:
             articles: ResultSet = get_articles_from_hatebu(entry)
-            urls: List[Article] = []
             for article in articles:
                 article_url: str = article.find('a',
                                                 {'class': 'js-keyboard-openable',
                                                  'data-gtm-click-label': 'entry-info-title',
                                                  'href': True})['href']
+                                            
+                logger.info(article_url)
                 published_date: str = article.find(
                     'li', {'class': 'entrylist-contents-date'}).contents[0]
                 published_at: datetime = datetime.strptime(
@@ -111,8 +113,8 @@ def main():
                     'a', {'class': 'js-keyboard-entry-page-openable'}).select_one("span").text
 
                 urls.append(Article(article_url, published_at, hatebu_count))
-            save_url(row.company_name, urls)
 
+        save_url(row.company_name, urls)
 
 if __name__ == '__main__':
     main()
