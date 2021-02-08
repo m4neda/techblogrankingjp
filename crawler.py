@@ -22,13 +22,13 @@ def get_response(url, page):
             params={
                 'url': url,
                 'page': page,
-                'sort': 'eid'})
+            })
     except requests.exceptions.SSLError:
         r = requests.get(
             endpoint,
             params={
                 'url': url,
-                'sort': 'eid'},
+            },
             verify=False)
     return r
 
@@ -91,7 +91,6 @@ def main():
     df = pd.read_csv('techbloglist.csv', usecols=['company_name', 'url'])
     for row in df.itertuples():
         keyword = row.url
-
         entrylist: List[BeautifulSoup] = []
         entrylist = get_all_entrylist(keyword, entrylist, page_count=None)
         urls: List[Article] = []
@@ -102,8 +101,7 @@ def main():
                                                 {'class': 'js-keyboard-openable',
                                                  'data-gtm-click-label': 'entry-info-title',
                                                  'href': True})['href']
-                                            
-                logger.info(article_url)
+
                 published_date: str = article.find(
                     'li', {'class': 'entrylist-contents-date'}).contents[0]
                 published_at: datetime = datetime.strptime(
@@ -115,6 +113,7 @@ def main():
                 urls.append(Article(article_url, published_at, hatebu_count))
 
         save_url(row.company_name, urls)
+
 
 if __name__ == '__main__':
     main()
