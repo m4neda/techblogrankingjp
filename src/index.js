@@ -1,10 +1,29 @@
 new gridjs.Grid({
-  columns: ['company_name', 'hatebu_count', 'url'],
+  columns: [
+    {
+      name:'rank',
+      formatter: (cell) => {
+        return gridjs.html(`<b>${cell}</b>`)}
+    },
+    {
+      name:'company_name',
+      formatter: (cell, row) => {
+        return gridjs.html(`<a href=${row.cells[4].data}>${cell}</a>`)}
+    },
+    'article_count',
+    'hatebu_count',
+    'Score',
+    {
+      name:'url',
+      hidden: true
+    }
+  ],
+  sort: true,
   pagination: {
-    limit: 20
+    limit: 10
   },
   server: {
-    url: 'https://s3-ap-northeast-1.amazonaws.com/m4neda.example.com/hatebucount.json',
-    then: data => data.map(result => [result.company_name, result.hatebu_count, result.url])
-  } 
+    url: 'http://localhost:8080/',
+    then: data => data.map(result => [result.rank, result.company_name, result.article_count, result.hatebu_count, result.score, result.url])
+  }
 }).render(document.getElementById("wrapper"));
