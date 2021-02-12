@@ -8,7 +8,7 @@ new gridjs.Grid({
     {
       name:'company_name',
       formatter: (cell, row) => {
-        return gridjs.html(`<a href=${row.cells[4].data}>${cell}</a>`)}
+        return gridjs.html(`<a href=${row.cells[5].data}>${cell}</a>`)}
     },
     'article_count',
     'hatebu_count',
