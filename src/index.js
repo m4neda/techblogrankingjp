@@ -19,9 +19,8 @@ new gridjs.Grid({
     }
   ],
   sort: true,
-  pagination: {
-    limit: 10
-  },
+  search:true,
+  pagination: true,
   server: {
     url: 'http://localhost:8080/',
     then: data => data.map(result => [result.rank, result.company_name, result.article_count, result.hatebu_count, result.score, result.url])
