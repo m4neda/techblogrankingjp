@@ -5,10 +5,6 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 
 
-def get_csv() -> pd.DataFrame:
-    pass
-
-
 def calc_techblogscore(median_hatebu_count, number_of_articles: int):
     return number_of_articles * (median_hatebu_count + 1)
 
@@ -50,7 +46,13 @@ def main():
             'hatebu_count',
             'score',
             'url'])
-    df.insert(0, 'rank', df['score'].rank(ascending=False, method='min', na_option='bottom'))
+    df.insert(
+        0,
+        'rank',
+        df['score'].rank(
+            ascending=False,
+            method='min',
+            na_option='bottom'))
     df.fillna(0, inplace=True)
     df.sort_values('rank', inplace=True)
     df.to_json('json/rankings.json', orient='records', force_ascii=True)
