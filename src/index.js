@@ -8,7 +8,7 @@ new gridjs.Grid({
     {
       name:'企業名',
       formatter: (cell, row) => {
-        return gridjs.html(`<a href=${row.cells[5].data}>${cell}</a>`)}
+        return gridjs.html(`<a href=https://b.hatena.ne.jp/entrylist?url=${row.cells[5].data}>${cell}</a>`)}
     },
     'スコア',
     '記事数',
