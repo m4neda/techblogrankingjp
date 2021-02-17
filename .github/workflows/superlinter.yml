@@ -19,7 +19,7 @@ jobs:
 
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: github/super-linter@v3
+        uses: docker://github/super-linter:v3.9.0  # There is a bug with pylint with python v3.9 so downgrade superlinter to use python v3.8.
         env:
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
