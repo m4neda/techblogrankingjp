@@ -70,8 +70,9 @@ def save_url(company_name, urls: Article):
         writer = csv.writer(f)
         writer.writerow(HEADER)
         for row in urls:
-            writer.writerow([row.url, row.published_at.strftime(
-                "%Y-%m-%d %H:%M"), row.hatebu_count])
+            writer.writerow(
+                [row.url, row.published_at.strftime("%Y-%m-%d %H:%M"), row.hatebu_count]
+            )
 
 
 def main():
