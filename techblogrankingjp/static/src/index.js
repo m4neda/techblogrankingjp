@@ -26,7 +26,7 @@ new gridjs.Grid({
   search: true,
   pagination: true,
   server: {
-    url: 'http://localhost:8080/',
+    url: 'https://s3-ap-northeast-1.amazonaws.com/techblogrank.com/json/rankings.json',
     then: data => data.map(result => [result.rank, result.company_name, result.score, result.article_count, result.hatebu_count, result.url])
   }
 }).render(document.getElementById('wrapper'))
