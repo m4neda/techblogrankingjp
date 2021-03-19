@@ -1,3 +1,6 @@
+Now testing!
+https://techblogrank.com/
+
 ### note for me
 #### poetry for VSCode
 - when you want to use debugger and formatter or somthing like that via VSCode, you need to create .venv file.
